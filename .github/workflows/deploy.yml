@@ -19,6 +19,7 @@ on:
         required: true
 
 # TODO How do we make the 'Deploy' job depend on EITHER validate OR preview completing? (You'll never have a situation where both complete)
+# TODO Bicep warning (about the bicepconfig.json file being present) is emitted to stderr and causes the workflow to fail at the deploy step
 
 jobs:
   validate: 
@@ -57,15 +58,15 @@ jobs:
       appServiceAppHostName: ${{ steps.deploy.outputs.appServiceAppHostName }}
     steps:
     - uses: actions/checkout@v2
+    - uses: Azure/cli@v1
+      name: Upgrade Bicep
+      with:
+        inlineScript: |
+          az bicep upgrade
     - uses: azure/login@v1
       name: Sign in to Azure
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - uses: Azure/cli@v1
-      name: Run what-if
-      with:
-        inlineScript: |
-          az bicep upgrade
     - uses: azure/arm-deploy@v1
       id: deploy
       name: Deploy website
