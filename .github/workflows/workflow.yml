@@ -7,5 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  call-workflow-1:
+  build:
     uses: johndowns/test-workflow-1/.github/workflows/build.yml@main
+
+  lint:
+    uses: johndowns/test-workflow-1/.github/workflows/lint.yml@main
