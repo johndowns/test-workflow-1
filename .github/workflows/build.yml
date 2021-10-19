@@ -36,7 +36,7 @@ jobs:
 
     - name: Build database project
       working-directory: ./src/ToyCompany/ToyCompany.Database
-      run: MSBuild.exe ToyCompany.Database.sqlproj
+      run: MSBuild.exe ToyCompany.Database.sqlproj -property:Configuration=Release
 
     - name: Publish website as workflow artifact
       uses: actions/upload-artifact@v2
