@@ -10,11 +10,10 @@ jobs:
     steps:
     - name: Build publishable website
       run: |
-        cd ./src/ToyCompany
-        dotnet publish -c Release
+        dotnet publish --configuration Release
 
     - name: Publish website as workflow artifact
       uses: actions/upload-artifact@v2
       with:
         name: todo
-        path: ./src/ToyCompany/ToyCompany
+        path: ./src/ToyCompany
