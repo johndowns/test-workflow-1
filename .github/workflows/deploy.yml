@@ -21,6 +21,7 @@ on:
 jobs:
   validate: 
      if: inputs.ENVIRONMENT_TYPE != 'Production'
+     environment: ${{ inputs.environmentType }}
      runs-on: ubuntu-latest
      steps: 
      - uses: actions/checkout@v2
@@ -42,6 +43,7 @@ jobs:
   preview:
      if: inputs.ENVIRONMENT_TYPE == 'Production'
      needs: validate
+     environment: ${{ inputs.environmentType }}
      runs-on: ubuntu-latest
      steps: 
      - uses: actions/checkout@v2
@@ -59,9 +61,9 @@ jobs:
                --parameters environmentType=${{ inputs.ENVIRONMENT_TYPE }}
  
   deploy:
-    runs-on: ubuntu-latest
-    environment: ${{ inputs.environmentType }}
     needs: preview
+    environment: ${{ inputs.environmentType }}
+    runs-on: ubuntu-latest
     outputs:
       appServiceAppHostName: ${{ steps.deploy.outputs.appServiceAppHostName }}
     steps:
