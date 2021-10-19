@@ -27,3 +27,5 @@ jobs:
     with:
       environmentType: Production
       resourceGroupName: def
+    secrets:
+      mysecret: ${{ secrets.mysecret }}
