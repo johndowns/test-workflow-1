@@ -8,4 +8,4 @@ on:
 
 jobs:
   call-workflow-1:
-    uses: johndowns/test-workflow-1/workflows/build.yml@main
+    uses: johndowns/test-workflow-1/.github/workflows/build.yml@main
