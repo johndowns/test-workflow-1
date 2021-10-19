@@ -6,6 +6,9 @@ on:
       environmentType:
         required: true
         type: string
+      resourceGroupName:
+        required: true
+        type: string
 
 jobs:
   validate: 
@@ -14,7 +17,7 @@ jobs:
      steps: 
      - uses: actions/checkout@v2
      - run: |
-         echo '${{ format('env.AZURE_RESOURCEGROUP_NAME_{0}', inputs.environmentType) }}'
+         echo '${{ inputs.resourceGroupName }}'
 #     - uses: azure/login@v1
 #       name: Sign in to Azure
 #       with:

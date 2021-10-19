@@ -6,10 +6,6 @@ on:
       - main
   workflow_dispatch:
 
-env:
-  AZURE_RESOURCEGROUP_NAME_Test: abc
-  AZURE_RESOURCEGROUP_NAME_Production: def
-
 jobs:
 #  build:
 #    uses: johndowns/test-workflow-1/.github/workflows/build.yml@main
@@ -21,9 +17,11 @@ jobs:
     uses: johndowns/test-workflow-1/.github/workflows/deploy.yml@main
     with:
       environmentType: Test
+      resourceGroupName: abc
 
   deploy-production:
     uses: johndowns/test-workflow-1/.github/workflows/deploy.yml@main
     needs: deploy-test
     with:
       environmentType: Production
+      resourceGroupName: def
