@@ -1,0 +1,11 @@
+name: learn-github-actions
+
+on: 
+  push:
+    branches: 
+      - main
+  workflow_dispatch:
+
+jobs:
+  call-workflow-1:
+    uses: build.yml
