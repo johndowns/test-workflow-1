@@ -42,4 +42,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: database
-        path: ./src/ToyCompany/ToyCompany.Database
+        path: ./src/ToyCompany/ToyCompany.Database/bin/Release/ToyCompany.Database.dacpac
