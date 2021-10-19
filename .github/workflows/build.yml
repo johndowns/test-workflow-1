@@ -18,7 +18,6 @@ jobs:
     - name: Build publishable website
       run: |
         dotnet restore
-      working-directory: src/ToyWebsite
 
     - name: Publish website as workflow artifact
       uses: actions/upload-artifact@v2
