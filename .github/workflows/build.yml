@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     name: Build application and database
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
 
@@ -20,7 +20,7 @@ jobs:
         dotnet publish --configuration Release
       working-directory: ./src/ToyCompany/ToyCompany.Website
 
-    - name: TODO zip
+    - name: Zip publishable website
       run: |
         zip -r publish.zip .
       working-directory: ./src/ToyCompany/ToyCompany.Website/bin/Release/netcoreapp3.1/publish
@@ -30,3 +30,14 @@ jobs:
       with:
         name: website
         path: ./src/ToyCompany/ToyCompany.Website/bin/Release/netcoreapp3.1/publish/publish.zip
+
+
+    - name: Build database project
+      working-directory: ./src/ToyCompany/ToyCompany.Database
+      run: MSBuild.exe ToyCompany.Database.sqlproj
+
+    - name: Publish website as workflow artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: database
+        path: ./src/ToyCompany/ToyCompany.Database
