@@ -15,7 +15,7 @@ jobs:
 
   deploy-test:
     uses: johndowns/test-workflow-1/.github/workflows/deploy.yml@main
-    needs: [build, lint]
+    #needs: [build, lint]
     with:
       environmentType: Test
       resourceGroupName: ToyWeb2Test
