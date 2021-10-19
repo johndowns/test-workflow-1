@@ -20,5 +20,6 @@ jobs:
 
   deploy-production:
     uses: johndowns/test-workflow-1/.github/workflows/deploy.yml@main
+    needs: deploy-test
     with:
       environmentType: Production
