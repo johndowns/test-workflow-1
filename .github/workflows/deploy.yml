@@ -61,6 +61,11 @@ jobs:
       name: Sign in to Azure
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - uses: Azure/cli@v1
+      name: Run what-if
+      with:
+        inlineScript: |
+          az bicep upgrade
     - uses: azure/arm-deploy@v1
       id: deploy
       name: Deploy website
