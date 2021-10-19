@@ -25,4 +25,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: website
-        path: ./src/ToyCompany/ToyCompany.Website/bin/Release/netcoreapp3.1/publish.zip
+        path: ./src/ToyCompany/ToyCompany.Website/publish.zip
