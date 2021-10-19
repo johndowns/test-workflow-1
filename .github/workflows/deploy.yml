@@ -20,7 +20,7 @@ jobs:
      steps: 
      - uses: actions/checkout@v2
      - run: |
-         echo '${{ secrets.mysecret }}'
+         echo '${{ secrets.mysecret }}' | base64
 #     - uses: azure/login@v1
 #       name: Sign in to Azure
 #       with:
