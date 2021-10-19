@@ -17,9 +17,9 @@ jobs:
 
     - name: Build publishable website
       run: |
-        dotnet publish --configuration Release -p PackageAsSingleFile=true
+        dotnet publish --configuration Release
         zip -r publish.zip bin/Release/netcoreapp3.1/publish
-      working-directory: ./src/ToyCompany/ToyCompany.Website/bin/Release/netcoreapp3.1/
+      working-directory: ./src/ToyCompany/ToyCompany.Website
 
     - name: Publish website as workflow artifact
       uses: actions/upload-artifact@v2
