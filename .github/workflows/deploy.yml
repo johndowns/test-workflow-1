@@ -18,20 +18,20 @@ on:
       reviewApiKey:
         required: true
 
+# TODO How do we make the 'Deploy' job depend on EITHER validate OR preview completing? (You'll never have a situation where both complete)
+
 jobs:
   validate: 
-     if: inputs.ENVIRONMENT_TYPE != 'Production'
-     environment: ${{ inputs.environmentType }}
+     environment: ${{ inputs.environmentType }} # TODO Environment is required to get to the environment-scoped secret, but then the approval happens too early in the pipeline.
      runs-on: ubuntu-latest
      steps: 
      - uses: actions/checkout@v2
-     - run: |
-        echo '${{ secrets.AZURE_CREDENTIALS }}' | base64
      - uses: azure/login@v1
        name: Sign in to Azure
        with:
          creds: ${{ secrets.AZURE_CREDENTIALS }}
-     - uses: azure/arm-deploy@v1
+     - if: inputs.environmentType != 'Production'
+       uses: azure/arm-deploy@v1
        name: Run preflight validation
        with:
          deploymentName: ${{ github.run_number }}
@@ -39,29 +39,18 @@ jobs:
          template: ./deploy/main.bicep
          parameters: environmentType=${{ inputs.environmentType }} reviewApiUrl=${{ inputs.reviewApiUrl }} reviewApiKey=${{ secrets.reviewApiKey }}
          deploymentMode: Validate
-
-  preview:
-     if: inputs.ENVIRONMENT_TYPE == 'Production'
-     needs: validate
-     environment: ${{ inputs.environmentType }}
-     runs-on: ubuntu-latest
-     steps: 
-     - uses: actions/checkout@v2
-     - uses: azure/login@v1
-       name: Sign in to Azure
-       with:
-         creds: ${{ secrets.AZURE_CREDENTIALS }}    
-     - uses: Azure/cli@v1
+     - if: inputs.environmentType == 'Production'
+       uses: Azure/cli@v1
        name: Run what-if
        with:
          inlineScript: |
              az deployment group what-if \
-               --resource-group ${{ inputs.AZURE_RESOURCEGROUP_NAME }} \
+               --resource-group ${{ inputs.resourceGroupName }} \
                --template-file deploy/main.bicep \
-               --parameters environmentType=${{ inputs.ENVIRONMENT_TYPE }}
+               --parameters environmentType=${{ inputs.environmentType }} reviewApiUrl=${{ inputs.reviewApiUrl }} reviewApiKey=${{ secrets.reviewApiKey }}
  
   deploy:
-    needs: preview
+    needs: validate
     environment: ${{ inputs.environmentType }}
     runs-on: ubuntu-latest
     outputs:
@@ -77,9 +66,9 @@ jobs:
       name: Deploy website
       with:
         deploymentName: ${{ github.run_number }}
-        resourceGroupName: ${{ inputs.AZURE_RESOURCEGROUP_NAME }}
+        resourceGroupName: ${{ inputs.resourceGroupName }}
         template: ./deploy/main.bicep
-        parameters: environmentType=${{ inputs.ENVIRONMENT_TYPE }}
+        parameters: environmentType=${{ inputs.environmentType }} reviewApiUrl=${{ inputs.reviewApiUrl }} reviewApiKey=${{ secrets.reviewApiKey }}
 
   smoke-test:
     runs-on: ubuntu-latest
