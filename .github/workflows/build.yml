@@ -17,6 +17,7 @@ jobs:
 
     - name: Build publishable website
       run: |
+        cd ./src/ToyCompany/ToyCompany.Website
         dotnet restore
 
     - name: Publish website as workflow artifact
