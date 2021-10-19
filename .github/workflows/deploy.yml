@@ -17,7 +17,7 @@ jobs:
      steps: 
      - uses: actions/checkout@v2
      - run: |
-         echo '${{ env.mysecret }}'
+         echo '${{ secrets.mysecret }}'
 #     - uses: azure/login@v1
 #       name: Sign in to Azure
 #       with:
