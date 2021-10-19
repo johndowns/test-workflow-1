@@ -1,0 +1,14 @@
+name: lint-bicep
+
+on:
+  workflow_call:
+    inputs:
+      environmentType:
+        required: true
+        type: string
+
+jobs:
+  validate: 
+     runs-on: ubuntu-latest
+     steps: 
+     - uses: actions/checkout@v2

@@ -7,8 +7,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    uses: johndowns/test-workflow-1/.github/workflows/build.yml@main
+#  build:
+#    uses: johndowns/test-workflow-1/.github/workflows/build.yml@main
 
-  lint:
-    uses: johndowns/test-workflow-1/.github/workflows/lint.yml@main
+#  lint:
+#    uses: johndowns/test-workflow-1/.github/workflows/lint.yml@main
+
+  deploy-test:
+    uses: johndowns/test-workflow-1/.github/workflows/deploy.yml@main
+    with:
+      environmentType: Test
+
+  deploy-production:
+    uses: johndowns/test-workflow-1/.github/workflows/deploy.yml@main
+    with:
+      environmentType: Production
