@@ -37,7 +37,7 @@ jobs:
          deploymentName: ${{ github.run_number }}
          resourceGroupName: ${{ inputs.resourceGroupName }}
          template: ./deploy/main.bicep
-         parameters: environmentType=${{ inputs.environmentType }}
+         parameters: environmentType=${{ inputs.environmentType }} reviewApiUrl=${{ inputs.reviewApiUrl }} reviewApiKey=${{ secrets.reviewApiKey }}
          deploymentMode: Validate
 
   preview:
