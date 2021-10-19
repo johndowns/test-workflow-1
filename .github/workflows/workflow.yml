@@ -19,8 +19,10 @@ jobs:
     with:
       environmentType: Test
       resourceGroupName: ToyWeb2Test
+      reviewApiUrl: TODO
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      reviewApiKey: TODO
 
   deploy-production:
     uses: johndowns/test-workflow-1/.github/workflows/deploy.yml@main
@@ -28,5 +30,7 @@ jobs:
     with:
       environmentType: Production
       resourceGroupName: ToyWeb2Production
+      reviewApiUrl: TODO
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      reviewApiKey: TODO
