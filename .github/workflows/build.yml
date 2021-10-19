@@ -8,9 +8,10 @@ jobs:
     name: Build application and database
     runs-on: ubuntu-latest
     steps:
+
     - name: Build publishable website
       run: |
-        dotnet publish --configuration Release
+        dotnet restore
 
     - name: Publish website as workflow artifact
       uses: actions/upload-artifact@v2
