@@ -31,6 +31,8 @@ jobs:
 #        name: website
 #        path: ./src/ToyCompany/ToyCompany.Website/bin/Release/netcoreapp3.1/publish/publish.zip
 
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.3
 
     - name: Build database project
       working-directory: ./src/ToyCompany/ToyCompany.Database
