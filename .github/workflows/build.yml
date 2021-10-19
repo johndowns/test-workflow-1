@@ -10,7 +10,7 @@ jobs:
     steps:
     - name: Build publishable website
       run: |
-        cd ./src/ToyCompany/ToyCompany
+        cd ./src/ToyCompany
         dotnet publish -c Release
 
     - name: Publish website as workflow artifact
