@@ -18,6 +18,8 @@ jobs:
     with:
       environmentType: Test
       resourceGroupName: abc
+    secrets:
+      mysecret: ${{ secrets.mysecret }}
 
   deploy-production:
     uses: johndowns/test-workflow-1/.github/workflows/deploy.yml@main
