@@ -18,7 +18,7 @@ jobs:
     - name: Build publishable website
       run: |
         cd ./src/ToyCompany/ToyCompany.Website
-        dotnet restore
+        dotnet publish --configuration Release
 
     - name: Publish website as workflow artifact
       uses: actions/upload-artifact@v2
