@@ -15,17 +15,18 @@ jobs:
 
   deploy-test:
     uses: johndowns/test-workflow-1/.github/workflows/deploy.yml@main
+    needs: [build, lint]
     with:
       environmentType: Test
-      resourceGroupName: abc
+      resourceGroupName: ToyWeb2Test
     secrets:
-      mysecret: ${{ secrets.mysecret }}
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
   deploy-production:
     uses: johndowns/test-workflow-1/.github/workflows/deploy.yml@main
-    needs: deploy-test
+    needs: [build, lint, deploy-test]
     with:
       environmentType: Production
-      resourceGroupName: def
+      resourceGroupName: ToyWeb2Production
     secrets:
-      mysecret: ${{ secrets.mysecret }}
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
