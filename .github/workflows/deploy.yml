@@ -55,7 +55,7 @@ jobs:
   deploy:
     needs: validate # TODO How do we make the 'Deploy' job depend on EITHER validate OR preview completing? (You'll never have a situation where both complete.) Currently handling by having a single 'validateOrPreview' stage
     environment: ${{ inputs.environmentType }}
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     outputs:
       appServiceAppName: ${{ steps.deploy.outputs.appServiceAppName }}
       appServiceAppHostName: ${{ steps.deploy.outputs.appServiceAppHostName }}
