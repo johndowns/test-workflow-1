@@ -109,8 +109,8 @@ jobs:
     - uses: azure/sql-action@v1
       name: Add test data to database
       with:
-        server-name: ${{ steps.deploy.outputs.sqlServerFullyQualifiedDomainName }}
-        connection-string: ${{ format('Server={0};Initial Catalog={1};User Id={2};Password={3};', steps.deploy.outputs.sqlServerFullyQualifiedDomainName, steps.deploy.outputs.sqlDatabaseName, inputs.sqlServerAdministratorLogin, secrets.sqlServerAdministratorLoginPassword) }}
+        server-name: ${{ needs.deploy.outputs.sqlServerFullyQualifiedDomainName }}
+        connection-string: ${{ format('Server={0};Initial Catalog={1};User Id={2};Password={3};', needs.deploy.outputs.sqlServerFullyQualifiedDomainName, needs.deploy.outputs.sqlDatabaseName, inputs.sqlServerAdministratorLogin, secrets.sqlServerAdministratorLoginPassword) }}
         sql-file: 'deploy/sample-data/Toys.sql'
     - uses: Azure/cli@v1
       name: Upload sample images
