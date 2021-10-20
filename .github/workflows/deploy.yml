@@ -93,7 +93,7 @@ jobs:
       name: Deploy DACPAC to database
       with:
         server-name: ${{ steps.deploy.outputs.sqlServerFullyQualifiedDomainName }}
-        connection-string: ${{ format('Server={0};Database={1};User Id={2};Password={3};', steps.deploy.outputs.sqlServerFullyQualifiedDomainName, steps.deploy.outputs.sqlDatabaseName, inputs.sqlServerAdministratorLogin, secrets.sqlServerAdministratorLoginPassword) }}
+        connection-string: ${{ format('Server={0};Initial Catalog={1};User Id={2};Password={3};', steps.deploy.outputs.sqlServerFullyQualifiedDomainName, steps.deploy.outputs.sqlDatabaseName, inputs.sqlServerAdministratorLogin, secrets.sqlServerAdministratorLoginPassword) }}
         dacpac-package: ToyCompany.Database.dacpac
 
   smoke-test:
