@@ -1,4 +1,4 @@
-name: learn-github-actions
+name: toy-company-end-to-end
 concurrency: toy-company
 
 on: 
