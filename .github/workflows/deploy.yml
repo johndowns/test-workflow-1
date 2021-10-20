@@ -19,10 +19,9 @@ on:
         required: true
 
 # TODO How do we make the 'Deploy' job depend on EITHER validate OR preview completing? (You'll never have a situation where both complete)
-# TODO Bicep warning (about the bicepconfig.json file being present) is emitted to stderr and causes the workflow to fail at the deploy step
 
 jobs:
-  validate: 
+  validate:
      environment: ${{ inputs.environmentType }} # TODO Environment is required to get to the environment-scoped secret, but then the approval happens too early in the pipeline.
      runs-on: ubuntu-latest
      steps: 
@@ -58,11 +57,6 @@ jobs:
       appServiceAppHostName: ${{ steps.deploy.outputs.appServiceAppHostName }}
     steps:
     - uses: actions/checkout@v2
-    - uses: Azure/cli@v1
-      name: Upgrade Bicep
-      with:
-        inlineScript: |
-          az bicep upgrade
     - uses: azure/login@v1
       name: Sign in to Azure
       with:

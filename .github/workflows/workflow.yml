@@ -27,6 +27,7 @@ jobs:
   deploy-production:
     uses: johndowns/test-workflow-1/.github/workflows/deploy.yml@main
     #needs: [build, lint, deploy-test]
+    needs: deploy-test
     with:
       environmentType: Production
       resourceGroupName: ToyWeb2Production
