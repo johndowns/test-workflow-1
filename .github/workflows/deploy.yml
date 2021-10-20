@@ -92,13 +92,6 @@ jobs:
         server-name: ${{ steps.deploy.outputs.sqlServerFullyQualifiedDomainName }}
         connection-string: ${{ format('Server={0};Initial Catalog={1};User Id={2};Password={3};', steps.deploy.outputs.sqlServerFullyQualifiedDomainName, steps.deploy.outputs.sqlDatabaseName, inputs.sqlServerAdministratorLogin, secrets.sqlServerAdministratorLoginPassword) }}
         dacpac-package: ToyCompany.Database.dacpac
-    - if: inputs.environmentType != 'Production'
-      uses: azure/sql-action@v1
-      name: Add test data to database
-      with:
-        server-name: ${{ steps.deploy.outputs.sqlServerFullyQualifiedDomainName }}
-        connection-string: ${{ format('Server={0};Initial Catalog={1};User Id={2};Password={3};', steps.deploy.outputs.sqlServerFullyQualifiedDomainName, steps.deploy.outputs.sqlDatabaseName, inputs.sqlServerAdministratorLogin, secrets.sqlServerAdministratorLoginPassword) }}
-        sql-file: 'deploy/sample-data/Toys.sql'
 
   deploySampleData:
     needs: deploy
@@ -111,6 +104,12 @@ jobs:
       name: Sign in to Azure
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - uses: azure/sql-action@v1
+      name: Add test data to database
+      with:
+        server-name: ${{ steps.deploy.outputs.sqlServerFullyQualifiedDomainName }}
+        connection-string: ${{ format('Server={0};Initial Catalog={1};User Id={2};Password={3};', steps.deploy.outputs.sqlServerFullyQualifiedDomainName, steps.deploy.outputs.sqlDatabaseName, inputs.sqlServerAdministratorLogin, secrets.sqlServerAdministratorLoginPassword) }}
+        sql-file: 'deploy/sample-data/Toys.sql'
     - uses: Azure/cli@v1
       name: Upload sample images
       with:
@@ -122,7 +121,7 @@ jobs:
 
   smoke-test:
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: deploy # TODO depend on deploySampleData too, but only if it's non-prod
     steps: 
     - uses: actions/checkout@v2
     - run: |
