@@ -55,7 +55,11 @@ jobs:
              az deployment group what-if \
                --resource-group ${{ inputs.resourceGroupName }} \
                --template-file deploy/main.bicep \
-               --parameters environmentType=${{ inputs.environmentType }} reviewApiUrl=${{ inputs.reviewApiUrl }} reviewApiKey=${{ secrets.reviewApiKey }} sqlServerAdministratorLogin=${{ inputs.sqlServerAdministratorLogin }} sqlServerAdministratorLoginPassword=${{ secrets.sqlServerAdministratorLoginPassword }}
+               --parameters environmentType=${{ inputs.environmentType }} \
+                            reviewApiUrl=${{ inputs.reviewApiUrl }} \
+                           reviewApiKey=${{ secrets.reviewApiKey }} \
+                           sqlServerAdministratorLogin=${{ inputs.sqlServerAdministratorLogin }} \
+                           sqlServerAdministratorLoginPassword=${{ secrets.sqlServerAdministratorLoginPassword }}
  
   deploy:
     needs: validate # TODO How do we make the 'Deploy' job depend on EITHER validate OR preview completing? (You'll never have a situation where both complete.) Currently handling by having a single 'validateOrPreview' stage
@@ -82,7 +86,12 @@ jobs:
         deploymentName: ${{ github.run_number }}
         resourceGroupName: ${{ inputs.resourceGroupName }}
         template: ./deploy/main.bicep
-        parameters: environmentType=${{ inputs.environmentType }} reviewApiUrl=${{ inputs.reviewApiUrl }} reviewApiKey=${{ secrets.reviewApiKey }} sqlServerAdministratorLogin=${{ inputs.sqlServerAdministratorLogin }} sqlServerAdministratorLoginPassword=${{ secrets.sqlServerAdministratorLoginPassword }}
+        parameters: >
+           environmentType=${{ inputs.environmentType }}
+           reviewApiUrl=${{ inputs.reviewApiUrl }}
+           reviewApiKey=${{ secrets.reviewApiKey }}
+           sqlServerAdministratorLogin=${{ inputs.sqlServerAdministratorLogin }}
+           sqlServerAdministratorLoginPassword=${{ secrets.sqlServerAdministratorLoginPassword }}
     - uses: azure/webapps-deploy@v2
       name: Deploy website
       with:
