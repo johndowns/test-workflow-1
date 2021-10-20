@@ -18,8 +18,6 @@ on:
       reviewApiKey:
         required: true
 
-# TODO How do we make the 'Deploy' job depend on EITHER validate OR preview completing? (You'll never have a situation where both complete)
-
 jobs:
   validate:
      environment: ${{ inputs.environmentType }} # TODO Environment is required to get to the environment-scoped secret, but then the approval happens too early in the pipeline.
@@ -50,13 +48,17 @@ jobs:
                --parameters environmentType=${{ inputs.environmentType }} reviewApiUrl=${{ inputs.reviewApiUrl }} reviewApiKey=${{ secrets.reviewApiKey }}
  
   deploy:
-    needs: validate
+    needs: validate # TODO How do we make the 'Deploy' job depend on EITHER validate OR preview completing? (You'll never have a situation where both complete.) Currently handling by having a single 'validateOrPreview' stage
     environment: ${{ inputs.environmentType }}
     runs-on: ubuntu-latest
     outputs:
+      appServiceAppName: ${{ steps.deploy.outputs.appServiceAppName }}
       appServiceAppHostName: ${{ steps.deploy.outputs.appServiceAppHostName }}
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v2
+      with:
+        name: website
     - uses: azure/login@v1
       name: Sign in to Azure
       with:
@@ -70,6 +72,10 @@ jobs:
         resourceGroupName: ${{ inputs.resourceGroupName }}
         template: ./deploy/main.bicep
         parameters: environmentType=${{ inputs.environmentType }} reviewApiUrl=${{ inputs.reviewApiUrl }} reviewApiKey=${{ secrets.reviewApiKey }}
+    - uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ steps.deploy.outputs.appServiceAppName }}
+        package: publish.zip
 
   smoke-test:
     runs-on: ubuntu-latest
