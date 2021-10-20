@@ -20,9 +20,11 @@ jobs:
       environmentType: Test
       resourceGroupName: ToyWeb2Test
       reviewApiUrl: TODO
+      sqlServerAdministratorLogin: testsqladmin
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       reviewApiKey: TODO
+      sqlServerAdministratorLoginPassword: 'Test123!!!!!' # TODO bad
 
   deploy-production:
     uses: johndowns/test-workflow-1/.github/workflows/deploy.yml@main
@@ -31,6 +33,8 @@ jobs:
       environmentType: Production
       resourceGroupName: ToyWeb2Production
       reviewApiUrl: TODO
+      sqlServerAdministratorLogin: prodsqladmin
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       reviewApiKey: TODO
+      sqlServerAdministratorLoginPassword: Test123!!!!!
