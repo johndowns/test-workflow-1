@@ -40,7 +40,7 @@ jobs:
          deploymentName: ${{ github.run_number }}
          resourceGroupName: ${{ inputs.resourceGroupName }}
          template: ./deploy/main.bicep
-         parameters: |
+         parameters: >
            environmentType=${{ inputs.environmentType }}
            reviewApiUrl=${{ inputs.reviewApiUrl }}
            reviewApiKey=${{ secrets.reviewApiKey }}
