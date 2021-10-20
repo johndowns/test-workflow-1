@@ -57,12 +57,9 @@ jobs:
     environment: ${{ inputs.environmentType }}
     runs-on: windows-latest
     outputs:
-      appServiceAppName: ${{ steps.deploy.outputs.appServiceAppName }}
       appServiceAppHostName: ${{ steps.deploy.outputs.appServiceAppHostName }}
-      storageAccountName: ${{ steps.deploy.outputs.TODO }}
+      storageAccountName: ${{ steps.deploy.outputs.storageAccountName }}
       storageAccountImagesBlobContainerName: ${{ steps.deploy.outputs.storageAccountImagesBlobContainerName }}
-      sqlServerFullyQualifiedDomainName: ${{ steps.deploy.outputs.sqlServerFullyQualifiedDomainName }}
-      sqlDatabaseName: ${{ steps.deploy.outputs.sqlDatabaseName }}
     steps:
     - uses: actions/checkout@v2
     - uses: actions/download-artifact@v2
@@ -102,14 +99,25 @@ jobs:
         server-name: ${{ steps.deploy.outputs.sqlServerFullyQualifiedDomainName }}
         connection-string: ${{ format('Server={0};Initial Catalog={1};User Id={2};Password={3};', steps.deploy.outputs.sqlServerFullyQualifiedDomainName, steps.deploy.outputs.sqlDatabaseName, inputs.sqlServerAdministratorLogin, secrets.sqlServerAdministratorLoginPassword) }}
         sql-file: 'deploy/sample-data/Toys.sql'
-    - if: inputs.environmentType != 'Production'
-      uses: Azure/cli@v1
+
+  deploySampleData:
+    needs: deploy
+    if: inputs.environmentType != 'Production'
+    environment: ${{ inputs.environmentType }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: azure/login@v1
+      name: Sign in to Azure
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - uses: Azure/cli@v1
       name: Upload sample images
       with:
         inlineScript: |
             az storage blob upload-batch \
-              --account-name ${{ steps.deploy.outputs.storageAccountName }} \
-              --destination ${{ steps.deploy.outputs.storageAccountImagesBlobContainerName }} \
+              --account-name ${{ needs.deploy.outputs.storageAccountName }} \
+              --destination ${{ needs.deploy.outputs.storageAccountImagesBlobContainerName }} \
               --source 'deploy/sample-data/toyimages'
 
   smoke-test:
