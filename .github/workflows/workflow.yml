@@ -1,4 +1,5 @@
 name: learn-github-actions
+concurrency: toy-company
 
 on: 
   push:
