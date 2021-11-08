@@ -1,4 +1,4 @@
-name: lint-bicep
+name: deploy-bicep
 
 on:
   workflow_call:
@@ -144,7 +144,10 @@ jobs:
 
   smoke-test:
     runs-on: ubuntu-latest
-    needs: deploy # TODO depend on deploy-sample-data and deploy-sample-images too, but only if it's non-prod
+    needs:
+    - deploy
+    - deploy-sample-data
+    - deploy-sample-images
     steps: 
     - uses: actions/checkout@v2
     - run: |
