@@ -58,14 +58,14 @@ jobs:
                --template-file deploy/main.bicep \
                --parameters environmentType=${{ inputs.environmentType }} \
                             reviewApiUrl=${{ inputs.reviewApiUrl }} \
-                           reviewApiKey=${{ secrets.reviewApiKey }} \
-                           sqlServerAdministratorLogin=${{ inputs.sqlServerAdministratorLogin }} \
-                           sqlServerAdministratorLoginPassword=${{ secrets.sqlServerAdministratorLoginPassword }}
- 
+                            reviewApiKey=${{ secrets.reviewApiKey }} \
+                            sqlServerAdministratorLogin=${{ inputs.sqlServerAdministratorLogin }} \
+                            sqlServerAdministratorLoginPassword=${{ secrets.sqlServerAdministratorLoginPassword }}
+
   deploy:
-    needs: validate # TODO How do we make the 'Deploy' job depend on EITHER validate OR preview completing? (You'll never have a situation where both complete.) Currently handling by having a single 'validateOrPreview' stage
+    needs: validate
     environment: ${{ inputs.environmentType }}
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     outputs:
       appServiceAppHostName: ${{ steps.deploy.outputs.appServiceAppHostName }}
       storageAccountName: ${{ steps.deploy.outputs.storageAccountName }}
@@ -74,7 +74,6 @@ jobs:
       sqlDatabaseName: ${{ steps.deploy.outputs.sqlDatabaseName }}
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/download-artifact@v2
     - uses: azure/login@v1
       name: Sign in to Azure
       with:
@@ -93,11 +92,33 @@ jobs:
            reviewApiKey=${{ secrets.reviewApiKey }}
            sqlServerAdministratorLogin=${{ inputs.sqlServerAdministratorLogin }}
            sqlServerAdministratorLoginPassword=${{ secrets.sqlServerAdministratorLoginPassword }}
+
+  deploy-website:
+    needs: deploy
+    environment: ${{ inputs.environmentType }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@v2
+    - uses: azure/login@v1
+      name: Sign in to Azure
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
     - uses: azure/webapps-deploy@v2
       name: Deploy website
       with:
-        app-name: ${{ steps.deploy.outputs.appServiceAppName }}
+        app-name: ${{ needs.deploy.outputs.appServiceAppName }}
         package: website/publish.zip
+
+  deploy-database:
+    needs: deploy
+    environment: ${{ inputs.environmentType }}
+    runs-on: windows-latest
+    steps:
+    - uses: actions/download-artifact@v2
+    - uses: azure/login@v1
+      name: Sign in to Azure
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
     - uses: azure/sql-action@v1
       name: Deploy DACPAC to database
       with:
@@ -105,36 +126,36 @@ jobs:
         connection-string: ${{ format('Server={0};Initial Catalog={1};User Id={2};Password={3};', steps.deploy.outputs.sqlServerFullyQualifiedDomainName, steps.deploy.outputs.sqlDatabaseName, inputs.sqlServerAdministratorLogin, secrets.sqlServerAdministratorLoginPassword) }}
         dacpac-package: database/ToyCompany.Database.dacpac
 
-  deploy-sample-data:
-    needs: deploy
-    if: inputs.environmentType != 'Production'
+  seed-database:
+    needs: deploy-database
     environment: ${{ inputs.environmentType }}
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v2
     - uses: azure/login@v1
       name: Sign in to Azure
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - uses: azure/sql-action@v1
+    - if: inputs.environmentType != 'Production'
+      uses: azure/sql-action@v1
       name: Add test data to database
       with:
         server-name: ${{ needs.deploy.outputs.sqlServerFullyQualifiedDomainName }}
         connection-string: ${{ format('Server={0};Initial Catalog={1};User Id={2};Password={3};', needs.deploy.outputs.sqlServerFullyQualifiedDomainName, needs.deploy.outputs.sqlDatabaseName, inputs.sqlServerAdministratorLogin, secrets.sqlServerAdministratorLoginPassword) }}
         sql-file: 'deploy/sample-data/Toys.sql'
 
-  deploy-sample-images:
+  seed-storage-account:
     needs: deploy
-    if: inputs.environmentType != 'Production'
     environment: ${{ inputs.environmentType }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v2
     - uses: azure/login@v1
       name: Sign in to Azure
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - uses: Azure/cli@v1
+    - if: inputs.environmentType != 'Production'
+      uses: Azure/cli@v1
       name: Upload sample images
       with:
         azcliversion: 2.29.2 # TODO this is required while this is an issue: https://github.com/Azure/cli/issues/56
@@ -148,8 +169,10 @@ jobs:
     runs-on: ubuntu-latest
     needs:
     - deploy
-    - deploy-sample-data
-    - deploy-sample-images
+    - deploy-website
+    - deploy-database
+    - seed-database
+    - seed-storage-account
     steps: 
     - uses: actions/checkout@v2
     - run: |
