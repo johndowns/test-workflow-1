@@ -23,9 +23,9 @@ jobs:
       reviewApiUrl: TODO
       sqlServerAdministratorLogin: testsqladmin
     secrets:
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS_TEST }}
       reviewApiKey: TODO
-      sqlServerAdministratorLoginPassword: 'Test123!!!!!' # TODO bad
+      sqlServerAdministratorLoginPassword: 'Test123!!!!!'
 
   deploy-production:
     uses: johndowns/test-workflow-1/.github/workflows/deploy.yml@main
@@ -36,6 +36,6 @@ jobs:
       reviewApiUrl: TODO
       sqlServerAdministratorLogin: prodsqladmin
     secrets:
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS_PRODUCTION }}
       reviewApiKey: TODO
       sqlServerAdministratorLoginPassword: Test123!!!!!
