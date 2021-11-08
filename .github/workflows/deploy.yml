@@ -128,7 +128,9 @@ jobs:
         dacpac-package: database/ToyCompany.Database.dacpac
 
   seed-database:
-    needs: deploy-database
+    needs:
+    - deploy
+    - deploy-database
     environment: ${{ inputs.environmentType }}
     runs-on: windows-latest
     steps:
