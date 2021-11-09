@@ -113,7 +113,7 @@ jobs:
   deploy-database:
     needs: deploy
     environment: ${{ inputs.environmentType }}
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/download-artifact@v2
     - uses: azure/login@v1
@@ -132,7 +132,7 @@ jobs:
     - deploy
     - deploy-database
     environment: ${{ inputs.environmentType }}
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - uses: azure/login@v1
